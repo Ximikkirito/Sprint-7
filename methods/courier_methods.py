@@ -1,7 +1,7 @@
+import allure
 import requests
 
 from urls import (
-    BASE_URL,
     CREATE_COURIER,
     LOGIN_COURIER,
     DELETE_COURIER
@@ -11,21 +11,24 @@ from urls import (
 class CourierMethods:
 
     @staticmethod
+    @allure.step("Создать курьера")
     def create_courier(payload):
         return requests.post(
-            f'{BASE_URL}{CREATE_COURIER}',
+            CREATE_COURIER,
             data=payload
         )
 
     @staticmethod
+    @allure.step("Авторизовать курьера")
     def login(payload):
         return requests.post(
-            f'{BASE_URL}{LOGIN_COURIER}',
+            LOGIN_COURIER,
             data=payload
         )
 
     @staticmethod
+    @allure.step("Удалить курьера")
     def delete(courier_id):
         return requests.delete(
-            f'{BASE_URL}{DELETE_COURIER}{courier_id}'
+            f"{DELETE_COURIER}{courier_id}"
         )

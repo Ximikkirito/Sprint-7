@@ -24,8 +24,7 @@ class TestCreateOrder:
         payload = OrderData.ORDER.copy()
         payload["color"] = color
 
-        with allure.step("Создать заказ"):
-            response = OrderMethods.create_order(payload)
+        response = OrderMethods.create_order(payload)
 
         with allure.step("Проверить код ответа"):
             assert response.status_code == 201

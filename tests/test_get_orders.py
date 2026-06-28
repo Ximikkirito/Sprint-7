@@ -10,11 +10,10 @@ class TestGetOrders:
     @allure.title("Получение списка заказов")
     def test_get_orders_list(self):
 
-        with allure.step("Получить список заказов"):
-            response = OrderMethods.get_orders()
+        response = OrderMethods.get_orders()
 
         with allure.step("Проверить код ответа"):
             assert response.status_code == 200
 
-        with allure.step("Проверить наличие списка заказов в ответе"):
+        with allure.step("Проверить наличие списка заказов"):
             assert "orders" in response.json()

@@ -1,52 +1,45 @@
+import allure
 import requests
 
 from urls import (
-    BASE_URL,
     CREATE_ORDER,
     GET_ORDERS,
-    ACCEPT_ORDER,
-    GET_ORDER_BY_TRACK
+    GET_ORDER_BY_TRACK,
+    ACCEPT_ORDER
 )
 
 
 class OrderMethods:
 
     @staticmethod
+    @allure.step("Создать заказ")
     def create_order(payload):
         return requests.post(
-            f'{BASE_URL}{CREATE_ORDER}',
+            CREATE_ORDER,
             json=payload
         )
 
     @staticmethod
+    @allure.step("Получить список заказов")
     def get_orders():
-        return requests.get(
-            f'{BASE_URL}{GET_ORDERS}'
-        )
+        return requests.get(GET_ORDERS)
 
     @staticmethod
-    def accept_order(order_id, courier_id):
-        return requests.put(
-            f'{BASE_URL}{ACCEPT_ORDER}{order_id}',
-            params={
-                "courierId": courier_id
-            }
-        )
-
-    @staticmethod
+    @allure.step("Получить заказ по треку")
     def get_order_by_track(track):
         return requests.get(
-            f'{BASE_URL}{GET_ORDER_BY_TRACK}',
+            GET_ORDER_BY_TRACK,
             params={
                 "t": track
             }
         )
 
     @staticmethod
-    def cancel_order(track):
+    @allure.step("Принять заказ")
+    def accept_order(order_id, courier_id):
         return requests.put(
-            f'{BASE_URL}{CREATE_ORDER}/cancel',
+            f"{ACCEPT_ORDER}{order_id}",
             params={
-                "track": track
+                "courierId": courier_id
             }
         )

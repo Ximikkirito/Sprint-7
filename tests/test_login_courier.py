@@ -1,4 +1,5 @@
 import allure
+import pytest
 
 from data.courier_data import CourierData
 from data.messages import Messages
@@ -14,10 +15,9 @@ class TestLoginCourier:
 
         courier_data, _ = courier
 
-        with allure.step("Авторизоваться"):
-            response = CourierMethods.login(
-                CourierData.login_data(courier_data)
-            )
+        response = CourierMethods.login(
+            CourierData.login_data(courier_data)
+        )
 
         with allure.step("Проверить код ответа"):
             assert response.status_code == 200
@@ -26,28 +26,22 @@ class TestLoginCourier:
             assert "id" in response.json()
 
     @allure.title("Авторизация без логина")
-    def test_login_without_login(self, courier):
+    @pytest.mark.parametrize(
+        "payload",
+        [
+            CourierData.login_without_login(CourierData.valid_courier()),
+            CourierData.login_without_password(CourierData.valid_courier())
+        ]
+    )
+    def test_login_without_required_fields(self, payload):
 
-        courier_data, _ = courier
+        response = CourierMethods.login(payload)
 
-        response = CourierMethods.login(
-            CourierData.login_without_login(courier_data)
-        )
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 400
 
-        assert response.status_code == 400
-        assert response.json()["message"] == Messages.LOGIN_REQUIRED
-
-    @allure.title("Авторизация без пароля")
-    def test_login_without_password(self, courier):
-
-        courier_data, _ = courier
-
-        response = CourierMethods.login(
-            CourierData.login_without_password(courier_data)
-        )
-
-        assert response.status_code == 400
-        assert response.json()["message"] == Messages.LOGIN_REQUIRED
+        with allure.step("Проверить сообщение"):
+            assert response.json()["message"] == Messages.LOGIN_REQUIRED
 
     @allure.title("Авторизация с неверным логином")
     def test_login_wrong_login(self, courier):
@@ -58,8 +52,11 @@ class TestLoginCourier:
             CourierData.wrong_login(courier_data)
         )
 
-        assert response.status_code == 404
-        assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 404
+
+        with allure.step("Проверить сообщение"):
+            assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
 
     @allure.title("Авторизация с неверным паролем")
     def test_login_wrong_password(self, courier):
@@ -70,8 +67,11 @@ class TestLoginCourier:
             CourierData.wrong_password(courier_data)
         )
 
-        assert response.status_code == 404
-        assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 404
+
+        with allure.step("Проверить сообщение"):
+            assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
 
     @allure.title("Авторизация несуществующего курьера")
     def test_login_nonexistent_courier(self):
@@ -80,5 +80,8 @@ class TestLoginCourier:
             CourierData.nonexistent_login()
         )
 
-        assert response.status_code == 404
-        assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 404
+
+        with allure.step("Проверить сообщение"):
+            assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND

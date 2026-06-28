@@ -13,8 +13,7 @@ class TestDeleteCourier:
 
         _, courier_id = courier
 
-        with allure.step("Удалить курьера"):
-            response = CourierMethods.delete(courier_id)
+        response = CourierMethods.delete(courier_id)
 
         with allure.step("Проверить код ответа"):
             assert response.status_code == 200
@@ -27,13 +26,19 @@ class TestDeleteCourier:
 
         response = CourierMethods.delete("")
 
-        assert response.status_code == 404
-        assert "message" in response.json()
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 404
+
+        with allure.step("Проверить наличие сообщения"):
+            assert "message" in response.json()
 
     @allure.title("Удаление курьера с неверным id")
     def test_delete_courier_wrong_id(self):
 
         response = CourierMethods.delete(999999999)
 
-        assert response.status_code == 404
-        assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
+        with allure.step("Проверить код ответа"):
+            assert response.status_code == 404
+
+        with allure.step("Проверить сообщение"):
+            assert response.json()["message"] == Messages.ACCOUNT_NOT_FOUND
